@@ -32,6 +32,7 @@ if (phase_deal) {
 			}
 			ds_list_delete(card_pile,0);	
 		} else if (ds_list_size(hand_player)<5) {
+			card_pile[|0].back = false; //turn it face up
 			ds_list_add(hand_player,card_pile[|0]);
 			ds_list_delete(card_pile,0);	
 			target_position[0] += 50;
@@ -41,10 +42,6 @@ if (phase_deal) {
 				target_position[1] = y;
 				phase_deal = false;
 				phase_firstcard = true;
-				//player hands visible
-				for (var j = 0; j<ds_list_size(hand_player); j++) {
-					hand_player[|j].back = false;
-				}
 			}
 		} 
 	}
@@ -59,6 +56,7 @@ if (phase_firstcard) {
 	}
 	
 	if (abs(card_pile[|0].x-(target_position[0]))<0.1) {
+		card_pile[|0].back = false;
 		if (card_pile[|0].num != 8) { //put a new one if 8
 			phase_firstcard = false;
 			phase_check_card = true;	
@@ -91,6 +89,7 @@ if (phase_check_card) {
 		if (ds_list_size(card_pile) == 0) {
 			//give the rest of the discard pile to the card pile
 			for (var l = 0; l < ds_list_size(card_discard_pile)-2; l++) {
+				card_discard_pile[|0].back = false;
 				ds_list_add(card_pile,card_discard_pile[|0]);
 				ds_list_delete(card_discard_pile,0)
 			}
@@ -110,6 +109,7 @@ if (phase_check_card) {
 		card_pile[|0].depth = hand_player[|(ds_list_size(hand_player)-1)].depth + 1;
 		
 		if (abs(card_pile[|0].x-(target_position[0]))<0.1) {
+			card_pile[|0].back = false;
 			ds_list_add(hand_player,card_pile[|0]);
 			ds_list_delete(card_pile,0);
 		}
@@ -227,6 +227,7 @@ if (phase_check_card_enemy) {
 		if (ds_list_size(card_pile) == 0) {
 			//give the rest of the discard pile to the card pile
 			for (var l = 0; l < ds_list_size(card_discard_pile)-2; l++) {
+				card_discard_pile[|0].back = false;
 				ds_list_add(card_pile,card_discard_pile[|0]);
 				ds_list_delete(card_discard_pile,0)
 			}
@@ -270,7 +271,7 @@ if (phase_enemy_turn) { //enemy will just play one card. Enemy does not know how
 		hand_enemy[|ene].x+=(target_position[0]-hand_enemy[|ene].x)*lerp_speed;
 		hand_enemy[|ene].y+=(target_position[1]-hand_enemy[|ene].y)*lerp_speed;
 		hand_enemy[|ene].depth = card_discard_pile[|(ds_list_size(card_discard_pile)-1)].depth - 1;
-		
+		hand_enemy[|ene].back = false;
 		if (abs(hand_enemy[|ene].y-(target_position[1]))<0.1) {
 			ds_list_add(card_discard_pile,hand_enemy[|ene]);
 			ds_list_delete(hand_enemy,ene);
