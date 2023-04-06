@@ -1,7 +1,5 @@
 if (phase_shuffle) {
 	if (timer == shuffle_time) {
-		
-	show_debug_message("Shuffle")
 		randomise();
 		ds_list_shuffle(card_pile);
 		//shuffle the cards and display the card pile on the left
@@ -15,6 +13,8 @@ if (phase_shuffle) {
 		phase_shuffle = false;
 		target_position = [room_width/2 - 150,100];
 	}
+	
+	timer--;
 }
 
 if (phase_deal) {
@@ -159,6 +159,7 @@ if (phase_decision) { //player's decision time
 if (phase_put_decision) { //put the player-selected cards into the pile, one-by-one
 	player_cards_selected[|0].x+=(target_position[0]-player_cards_selected[|0].x)*lerp_speed;
 	player_cards_selected[|0].y+=(target_position[1]-player_cards_selected[|0].y)*lerp_speed;
+	player_cards_selected[|0].depth = card_discard_pile[|(ds_list_size(card_discard_pile)-1)].depth - 1;
 	
 	if (abs(player_cards_selected[|0].y-(target_position[1]))<0.1) {
 		ds_list_add(card_discard_pile,player_cards_selected[|0]);
@@ -166,6 +167,12 @@ if (phase_put_decision) { //put the player-selected cards into the pile, one-by-
 		if (ds_list_size(player_cards_selected) == 0) { //all player cards have been put down
 			phase_put_decision = false;
 			phase_enemy_turn = true;
+			//rearrange all the cards in player's hand:
+			show_debug_message("PUTTING")
+			for (var i = 0; i < ds_list_size(hand_player); i++) {
+				var c = hand_player[|i];
+				c.x = room_width/2 - 150 + 50*i;
+			}
 		}
 	}
 }
@@ -173,5 +180,3 @@ if (phase_put_decision) { //put the player-selected cards into the pile, one-by-
 if (phase_enemy_turn) {
 	
 }
-
-timer--;

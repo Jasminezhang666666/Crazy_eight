@@ -24,3 +24,5 @@ timer = shuffle_time;
 current_selected = card_pile[|0];
 player_selection = false;
 player_cards_selected = ds_list_create();
+
+enemy_time = 180;
