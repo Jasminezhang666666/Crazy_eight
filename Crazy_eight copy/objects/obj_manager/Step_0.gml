@@ -107,6 +107,7 @@ if (phase_check_card) {
 		
 		card_pile[|0].x+=(target_position[0]-card_pile[|0].x)*lerp_speed;
 		card_pile[|0].y+=(target_position[1]-card_pile[|0].y)*lerp_speed;
+		card_pile[|0].depth = hand_player[|(ds_list_size(hand_player)-1)].depth + 1;
 		
 		if (abs(card_pile[|0].x-(target_position[0]))<0.1) {
 			ds_list_add(hand_player,card_pile[|0]);
@@ -164,7 +165,6 @@ if (phase_decision) { //player's decision time
 			if (a.selected)  {
 				a.selected = false;
 				ds_list_add(player_cards_selected, a);
-				show_debug_message("I AM BEING Added! Current selected is " + string(ds_list_size(player_cards_selected)))
 				ds_list_delete(hand_player, w);
 				w--; //because the previous one has been removed
 			}
@@ -182,12 +182,10 @@ if (phase_put_decision) { //put the player-selected cards into the pile, one-by-
 	player_cards_selected[|0].x+=(target_position[0]-player_cards_selected[|0].x)*lerp_speed;
 	player_cards_selected[|0].y+=(target_position[1]-player_cards_selected[|0].y)*lerp_speed;
 	player_cards_selected[|0].depth = card_discard_pile[|(ds_list_size(card_discard_pile)-1)].depth - 1;
-	show_debug_message(ds_list_size(player_cards_selected));
 	
 	if (abs(player_cards_selected[|0].y-(target_position[1]))<0.05) {
 		ds_list_add(card_discard_pile,player_cards_selected[|0]);
 		ds_list_delete(player_cards_selected,0);
-		show_debug_message("deleted!")
 		if (ds_list_size(player_cards_selected) == 0) { //all player cards have been put down
 			phase_put_decision = false;
 			if (ds_list_size(hand_player) == 0) {
@@ -245,6 +243,7 @@ if (phase_check_card_enemy) {
 		
 		card_pile[|0].x+=(target_position[0]-card_pile[|0].x)*lerp_speed;
 		card_pile[|0].y+=(target_position[1]-card_pile[|0].y)*lerp_speed;
+		card_pile[|0].depth = hand_enemy[|(ds_list_size(hand_enemy)-1)].depth + 1;
 		
 		if (abs(card_pile[|0].x-(target_position[0]))<0.1) {
 			ds_list_add(hand_enemy,card_pile[|0]);
