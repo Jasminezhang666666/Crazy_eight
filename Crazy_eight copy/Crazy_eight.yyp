@@ -90,6 +90,7 @@
     {"id":{"name":"_5_of_spades","path":"sprites/_5_of_spades/_5_of_spades.yy",},"order":0,},
     {"id":{"name":"_11_of_spades","path":"sprites/_11_of_spades/_11_of_spades.yy",},"order":0,},
     {"id":{"name":"_13_of_spades","path":"sprites/_13_of_spades/_13_of_spades.yy",},"order":0,},
+    {"id":{"name":"fnt_main","path":"fonts/fnt_main/fnt_main.yy",},"order":0,},
     {"id":{"name":"_11_of_hearts","path":"sprites/_11_of_hearts/_11_of_hearts.yy",},"order":0,},
     {"id":{"name":"obj_card","path":"objects/obj_card/obj_card.yy",},"order":0,},
     {"id":{"name":"Room1","path":"rooms/Room1/Room1.yy",},"order":0,},

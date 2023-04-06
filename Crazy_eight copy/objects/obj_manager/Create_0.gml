@@ -27,3 +27,7 @@ player_cards_selected = ds_list_create();
 
 enemy_time = 120; //time for enemy decision
 ene = 0;
+
+
+player_win = false;
+enemy_win = false;
