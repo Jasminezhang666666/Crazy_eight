@@ -89,7 +89,7 @@ if (phase_check_card) {
 		if (ds_list_size(card_pile) == 0) {
 			//give the rest of the discard pile to the card pile
 			for (var l = 0; l < ds_list_size(card_discard_pile)-2; l++) {
-				card_discard_pile[|0].back = false;
+				card_discard_pile[|0].back = true;
 				ds_list_add(card_pile,card_discard_pile[|0]);
 				ds_list_delete(card_discard_pile,0)
 			}
@@ -227,7 +227,7 @@ if (phase_check_card_enemy) {
 		if (ds_list_size(card_pile) == 0) {
 			//give the rest of the discard pile to the card pile
 			for (var l = 0; l < ds_list_size(card_discard_pile)-2; l++) {
-				card_discard_pile[|0].back = false;
+				card_discard_pile[|0].back = true;
 				ds_list_add(card_pile,card_discard_pile[|0]);
 				ds_list_delete(card_discard_pile,0)
 			}
