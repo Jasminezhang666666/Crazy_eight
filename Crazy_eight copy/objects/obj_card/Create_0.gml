@@ -5,3 +5,5 @@ suit = "none";
 ds_list_add(card_pile,self);
 
 back = false; //for now, change it later
+
+selected = noone;

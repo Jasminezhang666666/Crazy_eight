@@ -57,78 +57,121 @@ if (phase_firstcard) {
 		//so discard cards are on top of each other
 		card_pile[|0].depth = card_discard_pile[|(ds_list_size(card_discard_pile)-1)].depth - 1;
 	}
-	show_debug_message(card_pile[|0].depth);
 	
 	if (abs(card_pile[|0].x-(target_position[0]))<0.1) {
-		show_debug_message("FUCK")
 		if (card_pile[|0].num != 8) { //put a new one if 8
 			phase_firstcard = false;
-			phase_decision = true;
+			phase_check_card = true;	
 		}
 		ds_list_add(card_discard_pile,card_pile[|0]);
 		ds_list_delete(card_pile,0);
 	}
 }
 
-if (phase_decision) {
-	//the juicy indication of card selection:
+if (phase_check_card) {
+	//add cards to player if none can be played
+	var has_card_toplay = false;
 	for (var i = 0; i < ds_list_size(hand_player); i++) {
 		var c = hand_player[|i];
-		if (!player_selected && mouse_x > (c.x + 51) && mouse_x < (c.x+c.sprite_width) && mouse_y > c.y && mouse_y < (900+c.sprite_height)) {
-			c.y = 500;
-			/*
-			if (mouse_check_button_pressed(mb_left)) { //and player selected the card
-				ply = i;
-				player_selected = true;
-				hand_enemy[|ene].back = false;
-				audio_play_sound(snd_flip,0,false);
-			}
-			*/
-		} else if (!player_selected) {
-			c.y = 550;
+		var t = card_discard_pile[|(ds_list_size(card_discard_pile)-1)]; //the top card on the discard pile
+		if (c.suit == t.suit || c.num == t.num) {
+			has_card_toplay = true;
+			phase_check_card = false;
+			phase_decision = true;
+		} else {
+			//the new card for the player
+			target_position[0] = room_width/2 - 150 + 50*ds_list_size(hand_player);
+			target_position[1] = 550;
+		}
+	}
+	
+	if (!has_card_toplay) {
+		card_pile[|0].x+=(target_position[0]-card_pile[|0].x)*lerp_speed;
+		card_pile[|0].y+=(target_position[1]-card_pile[|0].y)*lerp_speed;
+		
+		if (abs(card_pile[|0].x-(target_position[0]))<0.1) {
+			ds_list_add(hand_player,card_pile[|0]);
+			ds_list_delete(card_pile,0);
 		}
 	}
 }
 
-/*
-if (phase_decision) {
-	if (!enemy_decision_finished) {
-		hand_enemy[|ene].x+=(target_position[0]-hand_enemy[|ene].x)*lerp_speed;
-		hand_enemy[|ene].y+=(target_position[1]-hand_enemy[|ene].y)*lerp_speed;
-		
-		if (abs(hand_enemy[|ene].y-target_position[1])<0.2) {
-			enemy_decision_finished = true;
-		}
-	}	
-	
-	//the juicy indication of decision:
+if (phase_decision) { //player's decision time
+	//the juicy indication of card selection:
 	for (var i = 0; i < ds_list_size(hand_player); i++) {
 		var c = hand_player[|i];
-		if (!player_selected && mouse_x > c.x && mouse_x < (c.x+c.sprite_width) && mouse_y > c.y && mouse_y < (900+c.sprite_height)) {
-			c.y = 865;
+		if (mouse_x > (c.x + 51) && mouse_x < (c.x+c.sprite_width) && mouse_y > c.y && mouse_y < (900+c.sprite_height)) {
+			c.y = 500;
+			var t = card_discard_pile[|(ds_list_size(card_discard_pile)-1)]; //the top card on the discard pile
 			if (mouse_check_button_pressed(mb_left)) { //and player selected the card
-				ply = i;
-				player_selected = true;
-				hand_enemy[|ene].back = false;
-				audio_play_sound(snd_flip,0,false);
+				if (c.suit == t.suit || c.num == t.num){
+					//selected a card that can be selected according to the discard pile:
+					if (!c.selected) {
+						c.selected = true;
+						player_selection = true;
+						c.y = 500;
+						current_selected = c;
+					} else { //deselect this and all others with the same num
+						c.selected = false;
+						c.y = 550;
+						current_selected = noone;
+						player_selection = false;
+						for (var d = 0; d < ds_list_size(hand_player); d++) {
+							hand_player[|d].selected = false;
+							hand_player[|d].y = 550;
+						}
+					}
+				} else if (current_selected != noone && c.num == current_selected.num) {
+					if (!c.selected) {
+						c.selected = true;
+						c.y = 500;
+					} else { //deselect
+						c.selected = false;
+						c.y = 550;
+					}
+				}
 			}
-		} else if (!player_selected) {
-			c.y = 900;
+			
+		} else if (!c.selected) {
+			c.y = 550;
 		}
 	}
 	
-	if (player_selected) {
-		hand_player[|ply].x+=(600-hand_player[|ply].x)*lerp_speed;
-		hand_player[|ply].y+=(625-hand_player[|ply].y)*lerp_speed;
-	}
-	
-	if (abs(hand_player[|ply].y-625)<0.2 && enemy_decision_finished) {
-		phase_scoring = true;
+	//the final decision of which cards to choose:
+	if (player_selection && keyboard_check_pressed(vk_space)) {
+		//add the selected ones to a new list named "player_cards_selected"
+		for (var i = 0; i < ds_list_size(hand_player); i++) {
+			var c = hand_player[|i];
+			if (c.selected)  {
+				c.selected = false;
+				ds_list_add(player_cards_selected, c);
+				ds_list_delete(hand_player, i);
+			}
+		}
 		phase_decision = false;
-		timer = scoring_time;
-		player_selected = false;
-		enemy_decision_finished = false;
+		phase_put_decision = true;
+		//positions for the discard pile
+		target_position[0] = x + 200;
+		target_position[1] = y;
 	}
-}*/
+}
+
+if (phase_put_decision) { //put the player-selected cards into the pile, one-by-one
+	player_cards_selected[|0].x+=(target_position[0]-player_cards_selected[|0].x)*lerp_speed;
+	player_cards_selected[|0].y+=(target_position[1]-player_cards_selected[|0].y)*lerp_speed;
+	
+	if (abs(player_cards_selected[|0].y-(target_position[1]))<0.1) {
+		ds_list_add(card_discard_pile,player_cards_selected[|0]);
+		ds_list_delete(player_cards_selected,0);
+		if (ds_list_size(player_cards_selected) == 0) { //all player cards have been put down
+			phase_put_decision = false;
+			phase_enemy_turn = true;
+		}
+	}
+}
+
+if (phase_enemy_turn) {
+	
+}
 
 timer--;

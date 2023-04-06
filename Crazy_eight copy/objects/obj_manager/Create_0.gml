@@ -21,4 +21,6 @@ lerp_speed = 0.3;
 shuffle_time = 120;
 timer = shuffle_time;
 
-player_selected = false;
+current_selected = card_pile[|0];
+player_selection = false;
+player_cards_selected = ds_list_create();
