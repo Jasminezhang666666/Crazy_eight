@@ -166,9 +166,8 @@ if (phase_put_decision) { //put the player-selected cards into the pile, one-by-
 		ds_list_delete(player_cards_selected,0);
 		if (ds_list_size(player_cards_selected) == 0) { //all player cards have been put down
 			phase_put_decision = false;
-			phase_enemy_turn = true;
+			phase_check_card_enemy = true;
 			//rearrange all the cards in player's hand:
-			show_debug_message("PUTTING")
 			for (var i = 0; i < ds_list_size(hand_player); i++) {
 				var c = hand_player[|i];
 				c.x = room_width/2 - 150 + 50*i;
@@ -176,7 +175,73 @@ if (phase_put_decision) { //put the player-selected cards into the pile, one-by-
 		}
 	}
 }
-
-if (phase_enemy_turn) {
 	
+if (phase_check_card_enemy) {
+	//add cards to enemy if none can be played
+	var has_card_toplay = false;
+	for (var i = 0; i < ds_list_size(hand_enemy); i++) {
+		var c = hand_enemy[|i];
+		var t = card_discard_pile[|(ds_list_size(card_discard_pile)-1)]; //the top card on the discard pile
+		if (c.suit == t.suit || c.num == t.num) {
+			has_card_toplay = true;
+			phase_check_card_enemy = false;
+			phase_enemy_turn = true;
+			timer = enemy_time;
+		} else {
+			//the new card for the enemy
+			target_position[0] = room_width/2 - 150 + 50*ds_list_size(hand_enemy);
+			target_position[1] = 100;
+		}
+	}
+	
+	if (!has_card_toplay) {
+		card_pile[|0].x+=(target_position[0]-card_pile[|0].x)*lerp_speed;
+		card_pile[|0].y+=(target_position[1]-card_pile[|0].y)*lerp_speed;
+		
+		if (abs(card_pile[|0].x-(target_position[0]))<0.1) {
+			ds_list_add(hand_enemy,card_pile[|0]);
+			ds_list_delete(card_pile,0);
+		}
+	}
+}
+
+if (phase_enemy_turn) { //enemy will just play one card. Enemy does not know how to do combo.
+	if (timer == enemy_time) {
+		//positions for the discard pile
+		target_position[0] = x + 200;
+		target_position[1] = y;
+		//enemy selection:
+		var t = card_discard_pile[|(ds_list_size(card_discard_pile)-1)];
+		for (var i = 0; i < ds_list_size(hand_enemy); i++) {
+			var c = hand_enemy[|i];
+			if (c.suit == t.suit || c.num == t.num) {
+				ene = i;
+			}
+		}
+	} else if (timer <= 0) {
+		//putting the enemy decision
+		hand_enemy[|ene].x+=(target_position[0]-hand_enemy[|ene].x)*lerp_speed;
+		hand_enemy[|ene].y+=(target_position[1]-hand_enemy[|ene].y)*lerp_speed;
+		hand_enemy[|ene].depth = card_discard_pile[|(ds_list_size(card_discard_pile)-1)].depth - 1;
+		
+		if (abs(hand_enemy[|ene].y-(target_position[1]))<0.1) {
+			ds_list_add(card_discard_pile,hand_enemy[|ene]);
+			ds_list_delete(hand_enemy,ene);
+			phase_enemy_turn = false;
+			if (ds_list_size(hand_enemy) == 0) {
+				//ENEMY WINNNNNNNNNNNNN
+				
+				
+				
+			} else {
+				phase_check_card = true; //player's turn again;
+			}
+			//rearrange all the cards in enemy's hand:
+			for (var i = 0; i < ds_list_size(hand_enemy); i++) {
+				var c = hand_enemy[|i];
+				c.x = room_width/2 - 150 + 50*i;
+			}
+		}
+	}
+	timer --;
 }

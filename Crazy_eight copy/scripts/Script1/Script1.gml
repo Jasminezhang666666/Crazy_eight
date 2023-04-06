@@ -25,3 +25,5 @@ globalvar phase_put_decision;
 phase_put_decision = false;
 globalvar phase_enemy_turn;
 phase_enemy_turn = false;
+globalvar phase_check_card_enemy;
+phase_check_card_enemy = false;
