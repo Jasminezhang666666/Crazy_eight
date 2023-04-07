@@ -7,5 +7,5 @@ if (player_win) {
 } else if (enemy_win) {
 	draw_set_font(fnt_main);
 	draw_set_color(c_white);
-	draw_text(20, room_height/2, "Oops! You lost.");
+	draw_text(430, 100, "Oops! You lost.");
 }

@@ -120,7 +120,7 @@ if (phase_decision) { //player's decision time
 	//the juicy indication of card selection:
 	for (var i = 0; i < ds_list_size(hand_player); i++) {
 		var c = hand_player[|i];
-		if (mouse_x > (c.x + 51) && mouse_x < (c.x+c.sprite_width) && mouse_y > c.y && mouse_y < (900+c.sprite_height)) {
+		if ( ((i == 0 && mouse_x > (c.x)) || mouse_x > (c.x + 51)) && mouse_x < (c.x+c.sprite_width) && mouse_y > c.y && mouse_y < (900+c.sprite_height)) {
 			c.y = 500;
 			var t = card_discard_pile[|(ds_list_size(card_discard_pile)-1)]; //the top card on the discard pile
 			if (mouse_check_button_pressed(mb_left)) { //and player selected the card
